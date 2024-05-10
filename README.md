@@ -73,6 +73,9 @@ cd bank-management-system
 g++ main.cpp -o BankManagementSystem
 ```
 
+
+or use the CMake configs that i already added in the root folder, using visua studio.
+
 ## Usage
 
 1. Run the compiled executable:
