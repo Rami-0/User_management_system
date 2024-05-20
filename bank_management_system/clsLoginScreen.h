@@ -5,6 +5,7 @@
 #include "clsUser.h"
 #include "clsMainScreen.h"
 #include "Global.h"
+#include <conio.h>
 class clsLoginScreen {
 private:
 
@@ -40,7 +41,7 @@ private:
 			std::cin >> Username;
 
 			std::cout << std::setw(40) << std::left << "" << "Enter Password: ";
-			std::cin >> Password;
+			Password = GetPasswordFromUser(); // Get password securely
 
 			CurrentUser = clsUser::Find(Username, Password);
 
@@ -56,4 +57,27 @@ public:
 		system("cls");
 		return _Login();
 	}
+	// Function to get password securely
+	static std::string GetPasswordFromUser() {
+		const char BACKSPACE = 8;
+		const char ENTER = 13;
+		std::string password;
+		char ch = 0;
+
+		while ((ch = _getch()) != ENTER) {
+			if (ch == BACKSPACE) {
+				if (password.length() != 0) {
+					std::cout << "\b \b";
+					password.resize(password.length() - 1);
+				}
+			}
+			else {
+				password += ch;
+				std::cout << '*';
+			}
+		}
+		std::cout << std::endl;
+		return password;
+	}
+
 };

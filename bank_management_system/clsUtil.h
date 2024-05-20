@@ -116,26 +116,35 @@ public:
 	}
 
 	// This function takes a string and an encryption key and returns the encrypted string.
-	static std::string encryptText(std::string Text, short EncryptionKey = 2)
-	{
-		// Iterate over each character in the string and add the encryption key to its ASCII code.
-		for (int i = 0; i < Text.length(); i++)
-		{
-			Text[i] = char((int)Text[i] + EncryptionKey);
+
+	static std::string encryptText(std::string Text, const std::string& key = "3sN5Ku2X0bxHQgvWAdcpLahVioYTZtEyr9Blq6UjRJG7wzFC1fDeO8PnSmkIM4") {
+		std::string encryptedText = Text;
+		for (char& c : encryptedText) {
+			if (isalnum(c)) {
+				size_t index = key.find(c);
+				if (index != std::string::npos) {
+					c = key[(index + 5) % key.size()]; // Arbitrary shift for encryption
+				}
+			}
 		}
-		return Text;
+		return encryptedText;
 	}
 
+
 	// This function takes a string and an encryption key and returns the decrypted string.
-	static std::string decryptText(std::string Text, short EncryptionKey = 2)
-	{
-		// Iterate over each character in the string and subtract the encryption key from its ASCII code.
-		for (int i = 0; i < Text.length(); i++)
-		{
-			Text[i] = char((int)Text[i] - EncryptionKey);
+	static std::string decryptText(const std::string& encryptedText, const std::string key = "3sN5Ku2X0bxHQgvWAdcpLahVioYTZtEyr9Blq6UjRJG7wzFC1fDeO8PnSmkIM4") {
+		std::string decryptedText = encryptedText;
+		for (char& c : decryptedText) {
+			if (isalnum(c)) {
+				size_t index = key.find(c);
+				if (index != std::string::npos) {
+					c = key[(index - 5 + key.size()) % key.size()]; // Reverse shift for decryption
+				}
+			}
 		}
-		return Text;
+		return decryptedText;
 	}
+
 
 	static std::string convertNumberToText(long double number)
 	{

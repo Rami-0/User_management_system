@@ -3,8 +3,12 @@
 #include <string>
 #include "clsPerson.h"
 #include "clsString.h"
+#include "clsDate.h"
 #include <vector>
 #include <fstream>
+#include <iomanip>
+#include <sstream>
+
 
 class clsBankClient : public clsPerson
 {
@@ -18,6 +22,38 @@ private:
 	bool _MarkedForDelete = false;
 
 	// private methods
+
+	static std::string _GetLastAccountNumber() {
+		std::ifstream infile("Clients.txt");
+		std::string lastAccountNumber = "0000000000"; // Default if no accounts exist
+		std::string line;
+
+		if (infile.is_open()) {
+			while (std::getline(infile, line)) {
+				if (!line.empty()) {
+					std::vector<std::string> clientData = clsString::Split(line, "#//#");
+					if (clientData.size() >= 5) {
+						lastAccountNumber = clientData[4]; // Assuming account number is at index 4
+					}
+				}
+			}
+			infile.close();
+		}
+		else {
+			std::cerr << "Error opening file: Clients.txt" << std::endl;
+		}
+
+		return lastAccountNumber;
+	}
+
+	static std::string _GenerateNewAccountNumber() {
+		std::string lastAccountNumber = _GetLastAccountNumber();
+		long long lastNumber = std::stoll(lastAccountNumber);
+		long long newNumber = lastNumber + 1;
+		std::ostringstream newAccountNumberStream;
+		newAccountNumberStream << std::setw(10) << std::setfill('0') << newNumber;
+		return newAccountNumberStream.str();
+	}
 
 	// Get an empty clsBankClient object
 	static clsBankClient _GetEmptyClientObject()
@@ -181,6 +217,11 @@ private:
 	}
 
 public:
+	static clsBankClient createNewClient() {
+		std::string accountNumber = _GenerateNewAccountNumber();
+		return clsBankClient(enMode::AddNewMode, "", "", "", "", accountNumber, "", 0);
+	}
+
 	clsBankClient(enMode mode, std::string fName, std::string lName,
 		std::string email, std::string phone, std::string accountNumber, std::string pin, float accountBalance) :
 		clsPerson(fName, lName, email, phone)
